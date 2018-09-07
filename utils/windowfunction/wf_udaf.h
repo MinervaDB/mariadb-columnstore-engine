@@ -22,9 +22,9 @@
 #define UTILS_WF_UDAF_H
 
 #ifndef _MSC_VER
-#include <tr1/unordered_set>
+#include <tr1/unordered_map>
 #else
-#include <unordered_set>
+#include <unordered_map>
 #endif
 #include "windowfunctiontype.h"
 #include "mcsv1_udaf.h"
@@ -83,6 +83,10 @@ public:
     {
         return fDistinct;
     }
+	void setDistinct(bool d = true) 
+    {
+        fDistinct=d;
+    }
 
 protected:
     void SetUDAFValue(static_any::any& valOut, int64_t colOut, int64_t b, int64_t e, int64_t c);
@@ -92,8 +96,11 @@ protected:
     bool fDistinct;
     bool bRespectNulls;                   // respect null | ignore null
     bool bHasDropValue;                   // Set to false when we discover the UDAnF doesn't implement dropValue.
-    // To hold distinct values
-    std::tr1::unordered_set<static_any::any, DistinctHasher, DistinctEqual> fDistinctSet;
+    // To hold distinct values and their counts
+	typedef std::tr1::unordered_set<static_any::any, uint64_t, DistinctHasher, DistinctEqual> DistinctMap;
+	DistinctMap fDistinctMap;             
+
+//    std::tr1::unordered_set<static_any::any, DistinctHasher, DistinctEqual> fDistinctSet;
     static_any::any fValOut;              // The return value
 
 public:
